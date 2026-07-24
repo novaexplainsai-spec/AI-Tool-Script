@@ -17,6 +17,12 @@ add your own notes/opinion before recording — see `prompts/starter_prompt.txt`
 3. In your GitHub repo: Settings → Secrets and variables → Actions → add:
    - `PRODUCTHUNT_TOKEN`
    - `GROQ_API_KEY`
+   - `MAIL_USERNAME` — your Gmail address
+   - `MAIL_PASSWORD` — a Gmail **App Password** (not your normal password) —
+     generate one at myaccount.google.com/apppasswords (requires 2FA enabled
+     on the Google account first)
+   - `MAIL_TO` — the email address you want drafts sent to (can be the same
+     Gmail address)
 4. (Local testing only) copy `.env.example` to `.env` and fill in the values,
    then `pip install -r requirements.txt` and `python main.py`
 
