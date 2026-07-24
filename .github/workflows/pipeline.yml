@@ -1,0 +1,65 @@
+name: AI Tool Script Pipeline
+
+on:
+  schedule:
+    # Runs at 06:00 UTC every 3rd day of the month (approximation of "every 3rd day" -
+    # cron can't express a rolling "every 3 days" natively). See README for the
+    # alternative day-of-year-based schedule if you want a true rolling cadence.
+    - cron: "0 6 1,4,7,10,13,16,19,22,25,28,31 * *"
+  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  generate-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline
+        env:
+          PRODUCTHUNT_TOKEN: ${{ secrets.PRODUCTHUNT_TOKEN }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python main.py
+
+      - name: Check whether a new draft was created
+        id: check
+        run: |
+          if [ -n "$(git status --porcelain output/scripts)" ]; then
+            echo "new_draft=true" >> "$GITHUB_OUTPUT"
+            latest=$(ls -t output/scripts/*.md | head -n1)
+            echo "file=$latest" >> "$GITHUB_OUTPUT"
+          else
+            echo "new_draft=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit new draft script
+        if: steps.check.outputs.new_draft == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto: new tool script draft"
+          file_pattern: "output/**"
+
+      - name: Email the draft
+        if: steps.check.outputs.new_draft == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Nova Explains — new AI tool script draft ready"
+          to: ${{ secrets.MAIL_TO }}
+          from: Nova Explains Pipeline
+          body: "A new draft script was generated. See the attached file, or check output/scripts/ in the repo."
+          attachments: ${{ steps.check.outputs.file }}
