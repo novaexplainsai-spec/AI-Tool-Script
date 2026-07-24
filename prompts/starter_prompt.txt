@@ -1,0 +1,21 @@
+STARTER PROMPT — paste this into a new chat with Claude (or any LLM) once your
+GitHub Action has produced a new draft script in output/scripts/
+
+---
+
+I run a faceless YouTube channel called [YOUR CHANNEL NAME] covering AI tools
+for [YOUR AUDIENCE, e.g. freelancers]. Attached/pasted below is an auto-drafted
+script for a video about [TOOL NAME]. I have now tested the tool myself.
+
+My hands-on notes: [paste your real notes from using the tool]
+My honest verdict: [paste your real opinion - good/bad/who it's for]
+
+Please:
+1. Rewrite the Hook and Call-to-action sections in a natural, conversational
+   tone matching my channel's voice (not generic hype language).
+2. Weave my hands-on notes and verdict into the script naturally.
+3. Flag anything in the walkthrough section that sounds inaccurate or generic
+   so I can double check it before recording.
+4. Keep total runtime around 8-12 minutes of spoken content.
+
+Do not invent any tool features, pricing, or results I have not given you.
